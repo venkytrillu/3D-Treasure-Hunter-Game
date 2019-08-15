@@ -27,6 +27,8 @@ public class Controller : MonoBehaviour
     private int terrainLength; // terrain size (z)
     private int terrainPosX; // terrain position x
     private int terrainPosZ; // terrain position z
+
+
     private void Awake()
     {
         if(instance==null)
@@ -39,6 +41,7 @@ public class Controller : MonoBehaviour
 
     private void Start()
     {
+        
         player = GameObject.Find(Tags.Player);
        // terrain size x
         terrainWidth = (int)terrain.terrainData.size.x;
