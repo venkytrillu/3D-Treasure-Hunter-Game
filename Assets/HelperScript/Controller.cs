@@ -10,13 +10,15 @@ public enum GameState
 }
 public class Controller : MonoBehaviour
 {
+    public GameState gameState;
     public static Controller instance;
     public GameObject oxygenPrefab, crystalPrefab;
     public GameObject PanelHome, PanelGamePlay, PanelGameOver;
     public Slider slider;
-    public Text scoreTxt,bestScore,oxygenCount,crystalCount;
+    public Text scoreTxt,bestScore,oxygenCount,crystalCount,timeTxt;
     int currentScore,oxyCount;
     public int maxOxygens;
+    public float Timeleft;
     private GameObject player;
     public Terrain terrain;
     public int numberOfObjects; // number of objects to place
@@ -27,7 +29,8 @@ public class Controller : MonoBehaviour
     private int terrainLength; // terrain size (z)
     private int terrainPosX; // terrain position x
     private int terrainPosZ; // terrain position z
-
+    float timeOffset;
+    float timeEverySec=1;
 
     private void Awake()
     {
@@ -41,9 +44,11 @@ public class Controller : MonoBehaviour
 
     private void Start()
     {
-        
+        gameState = GameState.idle;
         player = GameObject.Find(Tags.Player);
-       // terrain size x
+        timeOffset = Timeleft;
+        timeTxt.text = Timeleft.ToString();
+        // terrain size x
         terrainWidth = (int)terrain.terrainData.size.x;
         // terrain size z
         terrainLength = (int)terrain.terrainData.size.z;
@@ -57,6 +62,8 @@ public class Controller : MonoBehaviour
 
     private void Update()
     {
+        if(gameState == GameState.play)
+             Timer();
         // generate objects
         if (currentObjects <= numberOfObjects)
         {
@@ -68,6 +75,22 @@ public class Controller : MonoBehaviour
         {
             Debug.Log("Generate objects complete!");
         }
+    }
+
+    void Timer()
+    {
+        timeEverySec -= Time.deltaTime;
+        if (timeEverySec <= 0)
+        {
+            Timeleft--;
+            timeTxt.text = Timeleft.ToString();
+            if (Timeleft < 10)
+            {
+                timeTxt.color = Color.red;
+            }
+            timeEverySec = 1;
+        }
+        
     }
 
   public void PlaceObject(int randomNum)
@@ -115,6 +138,7 @@ public class Controller : MonoBehaviour
 
    public void GameOver()
     {
+       
         PanelGamePlay.SetActive(false);
         PanelGameOver.SetActive(true);
         GetScore();
@@ -122,6 +146,7 @@ public class Controller : MonoBehaviour
 
     public void GamePlay()
     {
+        gameState = GameState.play;
         PanelHome.SetActive(false);
         PanelGamePlay.SetActive(true);
         EnablePlayerControls();

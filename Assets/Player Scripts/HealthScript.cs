@@ -21,7 +21,7 @@ public class HealthScript : MonoBehaviour
 
    public void Die()
     {
-        if(Health<=0 && Controller.instance.GetoxygenCount()==0)
+        if(Health<=0 && Controller.instance.GetoxygenCount()==0 || Controller.instance.Timeleft <= 0)
         {
             isDead = true;
             Controller.instance.GameOver();
